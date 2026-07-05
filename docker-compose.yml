@@ -24,3 +24,6 @@ services:
 volumes:
       - odoo-web-data:/var/lib/odoo
       - ./custom_addons:/mnt/extra-addons
+networks:
+  default:
+    name: odoo-network
