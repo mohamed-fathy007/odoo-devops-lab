@@ -15,13 +15,13 @@ jobs:
     - name: Log in to Docker Hub
       uses: docker/login-action@v3
       with:
-        username: ${{ secrets::DOCKERHUB_USERNAME }}
-        password: ${{ secrets::DOCKERHUB_TOKEN }}
+        username: ${{ secrets.DOCKERHUB_USERNAME }}
+        password: ${{ secrets.DOCKERHUB_TOKEN }}
 
     - name: Build and Push Odoo Image
       uses: docker/build-push-action@v5
       with:
         context: .
-        file: ./docker-compose.yml 
+        file: ./Dockerfile
         push: true
         tags: 01013576608/odoo-custom:latest
