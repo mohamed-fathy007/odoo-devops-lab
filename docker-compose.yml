@@ -2,10 +2,8 @@ version: '3.8'
 
 services:
   web:
-    # 1. اسم الـ Image اللي بتتبني وبنرفعها
     image: 01013576608/odoo-custom:latest
     
-    # 2. بنقول لدوكر يبنيها محلياً من الـ Dockerfile اللي في نفس المجلد
     build:
       context: .
       dockerfile: Dockerfile
