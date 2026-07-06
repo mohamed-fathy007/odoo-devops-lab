@@ -1,13 +1,22 @@
 version: '3.8'
+
 services:
   web:
-    image: odoo:17.0
+    # 1. اسم الـ Image اللي بتتبني وبنرفعها
+    image: 01013576608/odoo-custom:latest
+    
+    # 2. بنقول لدوكر يبنيها محلياً من الـ Dockerfile اللي في نفس المجلد
+    build:
+      context: .
+      dockerfile: Dockerfile
+      
     depends_on:
       - db
     ports:
       - "8069:8069"
     volumes:
       - odoo-web-data:/var/lib/odoo
+      - ./custom_addons:/mnt/extra-addons
     environment:
       - HOST=db
       - USER=odoo
@@ -21,9 +30,11 @@ services:
       - POSTGRES_USER=odoo
     volumes:
       - odoo-db-data:/var/lib/postgresql/data
+
 volumes:
-      - odoo-web-data:/var/lib/odoo
-      - ./custom_addons:/mnt/extra-addons
+  odoo-web-data:
+  odoo-db-data:
+
 networks:
   default:
     name: odoo-network
