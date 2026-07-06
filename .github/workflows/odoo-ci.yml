@@ -25,19 +25,18 @@ jobs:
           file: ./Dockerfile
           push: true
           tags: 01013576608/odoo-custom:latest
-
-      - name: Start container for Smoke Test
+          
+      - name: Run Smoke Test using Docker Compose
         run: |
-          docker run -d --name test-odoo-app -p 8069:8069 01013576608/odoo-custom:latest
-          sleep 15
+          docker compose up -d
+          sleep 20
 
       - name: Check Container Status & Response
         run: |
-          docker ps
+          docker compose ps
           curl --fail http://localhost:8069 || exit 1
 
-      - name: Clean up Test Container
+      - name: Clean up Containers
         if: always()
         run: |
-          docker stop test-odoo-app
-          docker rm test-odoo-app
+          docker compose down -v
