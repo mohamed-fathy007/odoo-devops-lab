@@ -1,27 +1,43 @@
-name: Odoo DevOps CI/CD
+name: Odoo CI-CD Pipeline
 
 on:
   push:
-    branches: [ "main" ]
+    branches: [ "main", "master" ]
 
 jobs:
   build-and-push:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-    - name: Log in to Docker Hub
-      uses: docker/login-action@v3
-      with:
-        username: ${{ secrets.DOCKERHUB_USERNAME }}
-        password: ${{ secrets.DOCKERHUB_TOKEN }}
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-    - name: Build and Push Odoo Image
-      uses: docker/build-push-action@v5
-      with:
-        context: .
-        file: ./Dockerfile
-        push: true
-        tags: 01013576608/odoo-custom:latest
+      - name: Build and Push Odoo Image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: ./Dockerfile
+          push: true
+          tags: 01013576608/odoo-custom:latest
+
+      - name: Start container for Smoke Test
+        run: |
+          docker run -d --name test-odoo-app -p 8069:8069 01013576608/odoo-custom:latest
+          sleep 15
+
+      - name: Check Container Status & Response
+        run: |
+          docker ps
+          curl --fail http://localhost:8069 || exit 1
+
+      - name: Clean up Test Container
+        if: always()
+        run: |
+          docker stop test-odoo-app
+          docker rm test-odoo-app
